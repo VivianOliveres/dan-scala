@@ -23,7 +23,7 @@ class e0_vars_vals extends HandsOnSuite {
   exercice("You can reassign variables") {
     var a: Int = 5
     anchor(a)
-    a should be(__)
+    a should be(5)
 
     anchor(a)
 
@@ -31,13 +31,13 @@ class e0_vars_vals extends HandsOnSuite {
 
     anchor(a)
 
-    a should be(__)
+    a should be(7)
   }
 
   exercice("Values are immutables (like using final in Java)") {
     val a: Int = 5
 
-    a should be(__)
+    a should be(5)
 
     /*
     *  Questions:
@@ -52,13 +52,13 @@ class e0_vars_vals extends HandsOnSuite {
       return a + b
     }
 
-    add(5, 7) should be(__)
+    add(5, 7) should be(12)
   }
 
   exercice("Note that the return keyword is generally not used") {
     def add(a: Int, b: Int): Int = a + b
 
-    add(5, 7) should be(__)
+    add(5, 7) should be(12)
   }
 
   exercice("It's because scala evaluates the whole expression as return value") {
@@ -69,7 +69,7 @@ class e0_vars_vals extends HandsOnSuite {
       x * y
     }
 
-    simpleExpression should be(__)
-    advancedExpression should be(__)
+    simpleExpression should be(9)
+    advancedExpression should be(6)
   }
 }
