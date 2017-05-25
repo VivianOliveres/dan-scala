@@ -14,13 +14,15 @@ class e3_for_loops extends HandsOnSuite {
     //0, 1, 2, 3, 4, 5, 6, 7, 8, 9
     val someNumbers = Range(0, 10)
     // you can also use 'until' et 'to' => 0 until 10 == Range(0,10) == 0 to 9
+    // val someNumbers = 0 until 10
+    // val someNumbers = 0 to 9
 
     var sum = 0
     for (i <- someNumbers) {
       sum += i
     }
 
-    sum should equal(__)
+    sum should equal(45)
   }
 
   exercice("adding some logic") {
@@ -33,7 +35,7 @@ class e3_for_loops extends HandsOnSuite {
       }
     }
 
-    sum should equal(__)
+    sum should equal(20)
   }
 
   //for comprehensions
@@ -60,7 +62,7 @@ class e3_for_loops extends HandsOnSuite {
       yield i
 
     // reduceLeft allow us to sum all list elements
-    aList.reduceLeft( (k,l) => k + l) should be(__)
+    aList.reduceLeft( (k,l) => k + l) should be(20)
   }
 
 
@@ -75,7 +77,8 @@ class e3_for_loops extends HandsOnSuite {
       y <- yValues
     }
     yield (x, y)
-    coordinates(4) should be(__)
+    anchor(coordinates)
+    coordinates(4) should be((3, 1))
   }
 
   /**
