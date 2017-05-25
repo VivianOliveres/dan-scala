@@ -28,10 +28,10 @@ class e2_case_classes extends HandsOnSuite {
     val d3 = new MyDog("Scooby", "Doberman") // You can also instantiate using `new` but you don't have to.
     val d4 = MyDog.apply("Rex", "Custom") // Actually you can instantiate using the companion object apply method
 
-    (d1 == d3) should be(__)
-    (d1 == d2) should be(__)
-    (d2 == d3) should be(__)
-    (d2 == d4) should be(__)
+    (d1 == d3) should be(true)
+    (d1 == d2) should be(false)
+    (d2 == d3) should be(false)
+    (d2 == d4) should be(true)
   }
 
   /**
@@ -45,12 +45,12 @@ class e2_case_classes extends HandsOnSuite {
     val p3 = new Person("Martin", "Odersky")
 
     // actually, == calls the .equals method
-    (p1 == p2) should be(__)
-    (p1 == p3) should be(__)
+    (p1 == p2) should be(false)
+    (p1 == p3) should be(true)
 
     // The eq method checks reference equality (like '==' in Java)
-    (p1 eq p2) should be(__)
-    (p1 eq p3) should be(__)
+    (p1 eq p2) should be(false)
+    (p1 eq p3) should be(false)
   }
 
   /**
@@ -63,8 +63,8 @@ class e2_case_classes extends HandsOnSuite {
     val p2 = new Person("Super", "Man")
     val p3 = new Person("Iron", "Man")
 
-    (p1.hashCode == p2.hashCode) should be(__)
-    (p1.hashCode == p3.hashCode) should be(__)
+    (p1.hashCode == p2.hashCode) should be(false)
+    (p1.hashCode == p3.hashCode) should be(true)
   }
 
 
@@ -75,11 +75,11 @@ class e2_case_classes extends HandsOnSuite {
     case class MyDog(name: String, breed: String)
 
     val d1 = MyDog("Scooby", "Doberman")
-    d1.name should be(__)
-    d1.breed should be(__)
+    d1.name should be("Scooby")
+    d1.breed should be("Doberman")
 
     // What will happen ?
-    //d1.name = "Scooby Doo"
+//    d1.name = "Scooby Doo"
   }
 
   /**
@@ -92,11 +92,11 @@ class e2_case_classes extends HandsOnSuite {
 
     val d2 = d1.copy(name = "Scooby Doo") // copy the value with a new name
 
-    d1.name should be(__) // the original instance has not been touched
-    d1.breed should be(__)
+    d1.name should be("Scooby") // the original instance has not been touched
+    d1.breed should be("Doberman")
 
-    d2.name should be(__)
-    d2.breed should be(__) // other properties are automatically copied from the original instance
+    d2.name should be("Scooby Doo")
+    d2.breed should be("Doberman") // other properties are automatically copied from the original instance
   }
 
   /**
@@ -119,18 +119,18 @@ class e2_case_classes extends HandsOnSuite {
     p1.firstname should be("Sherlock")
     p1.lastname should be("Holmes")
     p1.age should be(23)
-    p1.phone should be(__)
+    p1.phone should be("06-XX-XX-XX-XX")
 
     p2.firstname should be("Doctor")
-    p2.lastname should be(__)
+    p2.lastname should be("Watson")
     p2.age should be(0)
-    p2.phone should be(__)
+    p2.phone should be("")
 
-    p3.firstname should be(__)
+    p3.firstname should be("Moriarty")
     p3.lastname should be("Professor")
     p3.age should be(0)
-    p3.phone should be(__)
+    p3.phone should be("01-XX-XX-XX-XX")
 
-    (p3 == p4) should be(__)
+    (p3 == p4) should be(false)
   }
 }
