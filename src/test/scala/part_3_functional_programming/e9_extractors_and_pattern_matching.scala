@@ -26,7 +26,7 @@ class e9_extractors_and_pattern_matching extends HandsOnSuite {
     // What the compiler actually does:
     // val extractedString = Email.unapply(email).get
 
-    (extractedString == mailstring) should be(__)
+    (extractedString == mailstring) should be(true)
   }
 
  /**
@@ -41,8 +41,8 @@ class e9_extractors_and_pattern_matching extends HandsOnSuite {
     val email = new Email("foo@bar.com",5)
     val Email(extractedString,extractedRatio) = email
 
-    (extractedRatio) should be(__)
-    (extractedString) should be(__)
+    (extractedRatio) should be(5)
+    (extractedString) should be("foo@bar.com")
   }
 
  /**
@@ -56,7 +56,7 @@ class e9_extractors_and_pattern_matching extends HandsOnSuite {
     val email = new Email(mailstring)
     val Email(extractedString) = email
 
-    (extractedString) should be(__)
+    (extractedString) should be("foo@bar.com")
   }
 
  /*
@@ -87,7 +87,7 @@ class e9_extractors_and_pattern_matching extends HandsOnSuite {
       case _ => "DEFAULT"
     }
 
-    actual should be (__)
+    actual should be ("stringB")
 
     val nextActual = "E" match {
       case "A" => "stringA"
@@ -96,7 +96,7 @@ class e9_extractors_and_pattern_matching extends HandsOnSuite {
       case _ => "DEFAULT"
     }
 
-    nextActual should be (__)
+    nextActual should be ("DEFAULT")
   }
 
   exercice("Order matters inside a pattern matching") {
@@ -105,7 +105,7 @@ class e9_extractors_and_pattern_matching extends HandsOnSuite {
       case "A" => "found A"
     }
 
-    actual should be (__)
+    actual should be ("DEFAULT")
   }
 
 
@@ -123,7 +123,7 @@ class e9_extractors_and_pattern_matching extends HandsOnSuite {
       case _ => "DEFAULT"
     }
 
-    actual should be (__)
+    actual should be ("stringB")
   }
 
   exercice("You do not have to capture all values") {
@@ -135,7 +135,7 @@ class e9_extractors_and_pattern_matching extends HandsOnSuite {
       case _ => "DEFAULT"
     }
 
-    actual should be (__)
+    actual should be ("string")
   }
 
 
@@ -147,7 +147,7 @@ class e9_extractors_and_pattern_matching extends HandsOnSuite {
       case _ => "DEFAULT"
     }
 
-    actual should be (__)
+    actual should be ("ok")
 
     val consActual = s match {
       case "a"::Nil => "ko"
@@ -155,14 +155,14 @@ class e9_extractors_and_pattern_matching extends HandsOnSuite {
       case _ => "DEFAULT"
     }
 
-    consActual should be (__)
+    consActual should be ("ok")
 
     val headtailActual = s match {
       case head::tail => tail
       case _ => "DEFAULT"
     }
 
-    headtailActual should be (__)
+    headtailActual should be (s.tail)
   }
 
 }
