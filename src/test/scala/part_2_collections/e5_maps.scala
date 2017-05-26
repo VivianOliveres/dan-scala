@@ -14,15 +14,15 @@ class e5_maps extends HandsOnSuite {
 
   exercice("It's easy to create a map!") {
     val myMap = Map("PA" -> "Paris", "BE" -> "Besançon", "BL" -> "Belfort")
-    myMap.size should be(__)
-    myMap.head should be(__)
+    myMap.size should be(3)
+    myMap.head should be("PA" -> "Paris")
     // There is no order in a map
     val myMapBis = Map("BE" -> "Besançon", "BL" -> "Belfort", "PA" -> "Paris")
-    myMap.equals(myMapBis) should be(__)
+    myMap.equals(myMapBis) should be(true)
     // impact of duplicated keys
     val myOtherMap = Map("PA" -> "Paris", "BE" -> "Besançon", "PA" -> "Palo Alto")
-    myOtherMap.size should be(__)
-    myOtherMap("PA") should be(__)
+    myOtherMap.size should be(2)
+    myOtherMap("PA") should be("Palo Alto")
   }
 
   /**
@@ -33,8 +33,8 @@ class e5_maps extends HandsOnSuite {
     // Adding one element
     val aNewMap = myMap + ("BL" -> "Belfort")
 
-    myMap.contains("BL") should be (__) // Maps are immutable
-    aNewMap.contains("BL") should be(__)
+    myMap.contains("BL") should be (false) // Maps are immutable
+    aNewMap.contains("BL") should be(true)
   }
 
   /**
@@ -45,17 +45,17 @@ class e5_maps extends HandsOnSuite {
 
     // removing a key
     val aNewMap = myMap - "NA"
-    aNewMap.contains("NA") should be(__)
+    aNewMap.contains("NA") should be(false)
     // removing multiple keys
     val aNewOtherMap = myMap -- List("BE", "BL")
-    aNewOtherMap.contains("BE") should be(__)
-    aNewOtherMap.contains("BL") should be(__)
+    aNewOtherMap.contains("BE") should be(false)
+    aNewOtherMap.contains("BL") should be(false)
     // An exception is raised when a key is absent
     intercept[NoSuchElementException] {
       aNewOtherMap("BL") should be("Belfort")
     }
     val maybeCity = aNewOtherMap.get("BL")
-    maybeCity should be (__)
+    maybeCity should be (None)
   }
 
 }
