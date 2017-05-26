@@ -34,9 +34,9 @@ class e4_lists extends HandsOnSuite {
     val a: List[String] = Nil
     val b: List[Int] = Nil
 
-    (a == Nil) should be(__)
-    (b == Nil) should be(__)
-    (a == b) should be(__)
+    (a == Nil) should be(true)
+    (b == Nil) should be(true)
+    (a == b) should be(true)
 
   }
 
@@ -47,7 +47,7 @@ class e4_lists extends HandsOnSuite {
     val a = List(1, 2, 3)
     val b = List(1, 2, 3)
 
-    (a eq b) should be(__)
+    (a eq b) should be(false)
   }
 
   /**
@@ -57,27 +57,27 @@ class e4_lists extends HandsOnSuite {
     val a = List(1, 3, 5, 7, 9)
 
     // accesses the element at index 2 in the list
-    a(2) should equal(__)
-    a.head should equal(__)
-    a.tail should equal(__)
-    a.length should equal(__)
-    a.reverse should equal(__)
+    a(2) should equal(5)
+    a.head should equal(1)
+    a.tail should equal(List(3, 5, 7, 9))
+    a.length should equal(5)
+    a.reverse should equal(List(9, 7, 5, 3, 1))
     // convert a List into a String
     anchor(a.toString)
 
     // multiplies by 3 each element in the list
     // `map` function compute an operation on each element of a collection
     // it returns a copy of the calling collection by applying the function given in parameter to each elem
-    a.map {v => v * 3} should equal(__)
+    a.map {v => v * 3} should equal(List(3, 9, 15, 21, 27))
 
     // keeps all multiples of 3
-    a.filter {v => v % 3 == 0} should equal(__)
+    a.filter {v => v % 3 == 0} should equal(List(3, 9))
 
     // keeps all numbers that are not multiples of 5
     val c = List(1, 2, 5, 8, 9)
     val b = c.filterNot(v => v % 5==0)
     c should equal(List(1, 2, 5, 8, 9)) // Lists are immutable by default
-    b should equal(__)
+    b should equal(List(1, 2, 8, 9))
   }
 
   /**
@@ -86,7 +86,7 @@ class e4_lists extends HandsOnSuite {
   exercice("Functions applied to lists can use `_`") {
     val a = List(1, 2, 3)
     // Here '_ * 2' is the same as writing 'i => i * 2'
-    a.map(_ * 2) should equal(__)
-    a.filter(_ % 2 != 0) should equal(__)
+    a.map(_ * 2) should equal(List(2, 4, 6))
+    a.filter(_ % 2 != 0) should equal(List(1, 3))
   }
 }
