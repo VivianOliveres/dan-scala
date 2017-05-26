@@ -33,7 +33,7 @@ class e8_higher_order_functions extends HandsOnSuite {
     val lambda = (x: Int) => x + 1
     def result = List(1, 2, 3) map lambda
     // Scala compiler do type inference, thus we can omit return types
-    result should be(__)
+    result should be(List(2, 3, 4))
   }
 
   /**
@@ -41,10 +41,10 @@ class e8_higher_order_functions extends HandsOnSuite {
   */
   exercice("simpler") {
     def result = List(1, 2, 3) map ( x => x + 1 )
-    result should be(__)
+    result should be(List(2, 3, 4))
 
     def evenSimpler = List(1, 2, 3) map ( _ + 1 )
-    evenSimpler should be(__)
+    evenSimpler should be(List(2, 3, 4))
   }
 
 
@@ -59,14 +59,14 @@ class e8_higher_order_functions extends HandsOnSuite {
       }
     }
 
-    addWithoutSyntaxSugar(1)(2) should be(__)
+    addWithoutSyntaxSugar(1)(2) should be(3)
 
     //simpler
     def add(x: Int) = (y: Int) => x + y
-    add(2)(3) should be(__)
+    add(2)(3) should be(5)
 
     def fiveAdder = add(5)
-    fiveAdder(5) should be(__)
+    fiveAdder(5) should be(10)
   }
 
   /**
@@ -83,12 +83,12 @@ class e8_higher_order_functions extends HandsOnSuite {
 
     makeWhatEverYouLike(List("ABC", "XYZ", "123"), {
       x => x.toLowerCase
-    }) should be(__)
+    }) should be(List("abc", "xyz", "123"))
 
     //using it inline
     List("Scala", "Erlang", "Clojure") map {
       _.length
-    } should be(__)
+    } should be(List(5, 6, 7))
   }
 
   /**
@@ -99,22 +99,20 @@ class e8_higher_order_functions extends HandsOnSuite {
     // watchout '_'
     // it indicates that the compiler should not apply the function but referencing it
     val multiplyCurried = (multiply _).curried
-    multiply(4, 5) should be(__)
-    multiplyCurried(4)(5) should be(__)
+    multiply(4, 5) should be(20)
+    multiplyCurried(4)(5) should be(20)
   }
 
 
   exercice("Currying can create specialized functions") {
-    def customFilter(f: Int => Boolean)(xs: List[Int]) = {
-      xs filter f
-    }
+    def customFilter(f: Int => Boolean)(xs: List[Int]) = xs filter f
     def onlyEven(x: Int) = x % 2 == 0
     val xs = List(12, 11, 5, 20, 3, 13, 2)
-    customFilter(onlyEven)(xs) should be(__)
+    customFilter(onlyEven)(xs) should be(List(12, 20, 2))
 
     // Watch out '_'
     // it indicates that the compiler should not apply the function but referencing it
     val onlyEvenFilter = customFilter(onlyEven) _
-    onlyEvenFilter(xs) should be(__)
+    onlyEvenFilter(xs) should be(List(12, 20, 2))
   }
 }
