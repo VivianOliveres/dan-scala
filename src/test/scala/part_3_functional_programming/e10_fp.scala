@@ -28,7 +28,14 @@ class e10_fp extends HandsOnSuite {
     // The apartment building is very tall, and the basement is very deep;
     // you will never find the top or bottom floors.
 
-    def targetFloor(instructions: String): Int = ???
+    def targetFloor(instructions: String): Int = {
+      if (instructions.isEmpty) return 0
+      val fistCharacterValue: Int = instructions.toCharArray.head match {
+        case '(' => 1
+        case ')' => -1
+      }
+      fistCharacterValue + targetFloor(instructions.tail)
+    }
 
     targetFloor("(())") should be (0)
     targetFloor("()()") should be (0)
@@ -54,7 +61,27 @@ class e10_fp extends HandsOnSuite {
     //
     // You also need a little extra paper for each box: the area of the smallest side.
 
-    def wrappingPaperToOrder(boxes: String): Int = ???
+    def wrappingPaperToOrder(boxes: String): Int = {
+      // /^\d*\.?\d*$/
+      def toInt(s: String): Int = {
+        try {
+          s.toInt
+        } catch {
+          case e: Exception => 0
+        }
+      }
+
+      boxes.split(",")
+        .map(s => {
+          val values = s.split("x")
+          if (values.length >= 3)
+            (toInt(values(0)), toInt(values(1)), toInt(values(2)))
+          else
+            (0, 0, 0)
+        })
+        .map{ case (l, w, h) => 2*l*w + 2*w*h + 2*h*l + math.min(math.min(l*w, w*h), h*l)}
+        .sum
+    }
 
     wrappingPaperToOrder("2x3x4") should be (58)
     wrappingPaperToOrder("1x1x10") should be (43)
@@ -76,7 +103,10 @@ class e10_fp extends HandsOnSuite {
     // 2) It contains at least one letter which repeats with exactly one letter
     //    between them, like xyx, abcdefeghi (efe), or even aaa.
 
-    def filterTextFile(str: String): List[String] = ???
+    def filterTextFile(str: String): List[String] = {
+      println(s"filterTextFile($str)")
+      ???
+    }
 
     filterTextFile(
       """
