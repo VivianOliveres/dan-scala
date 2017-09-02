@@ -14,8 +14,8 @@ class e14_stream extends HandsOnSuite {
 
     final def union[B >: A](stream: => Stream[B]):Stream[B]= {
       this match {
-        case cons:Cons[A] => Cons(cons.head, ???)
-        case EmptyStream => ???
+        case cons:Cons[A] => Cons(cons.head, cons.tail.union(stream))
+        case EmptyStream => stream
       }
     }
 
@@ -73,11 +73,20 @@ class e14_stream extends HandsOnSuite {
     /**
       * flatMap implementation needs function union
       */
-    def flatMap[B](f:A => Stream[B]):Stream[B] = ???
+    def flatMap[B](f:A => Stream[B]):Stream[B] = f(head).union(tl.flatMap(f))
 
-    override def filter(f:A => Boolean):Stream[A] = ???
+    override def filter(f:A => Boolean):Stream[A] =
+      if (f(head)) Cons(head, tl.filter(f))
+      else tl.filter(f)
 
-    override def equals(that:Any):Boolean = ???
+    override def equals(that:Any):Boolean = {
+      if (that.isInstanceOf[Cons[A]]) {
+        val thatCons:Cons[A] = that.asInstanceOf[Cons[A]]
+        head == thatCons.head && tail.equals(thatCons.tail)
+      } else {
+        false
+      }
+    }
 
     override def hashCode():Int = head.hashCode()
 
@@ -99,11 +108,11 @@ class e14_stream extends HandsOnSuite {
   case object EmptyStream extends Stream[Nothing] {
     type A = Nothing
 
-    def map[B](f:A => B):Stream[B]  = ???
+    def map[B](f:A => B):Stream[B]  = EmptyStream
 
-    def flatMap[B](f:A => Stream[B]):Stream[B] = ???
+    def flatMap[B](f:A => Stream[B]):Stream[B] = EmptyStream
 
-    def filter(f:A => Boolean):Stream[A] = ???
+    def filter(f:A => Boolean):Stream[A] = EmptyStream
 
     def isEmpty: Boolean = true
 
