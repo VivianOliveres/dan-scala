@@ -70,18 +70,37 @@ class Intro extends HandsOnSuite with BeforeAndAfter {
   }
 
   def topNWords(input: RDD[String], n: Int): Array[String] = {
-    ???
+    input.flatMap(_.split(" "))
+      .filter(!_.isEmpty)
+      .map(w => (w, 1))
+      .reduceByKey((a, b) => a + b)
+      .sortBy(_._2, false)
+      .take(2 * n)
+      .foreach(println(_))
+    input.flatMap(_.split(" "))
+      .filter(!_.isEmpty)
+      .map(w => (w, 1))
+      .reduceByKey((a, b) => a + b)
+      .sortBy(_._2, false)
+      .map(_._1)
+      .take(n)
   }
 
   def topNWordsWithAtLeastMLetters(input: RDD[String], n: Int, m: Int): Array[String] = {
-    ???
+    input.flatMap(_.split(" "))
+      .filter(_.length >= m)
+      .groupBy(word => (word, word))
+      .map{case (w, list) => (w, list.size)}
+      .sortBy(_._2)
+      .map{_._1._1}
+      .take(n)
   }
 
   // Doc is here -> https://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.package
 
   exercice("you can create RDD easily from a SparkContext") {
     val textRDD: RDD[String] = sc.textFile("lorem.txt")
-    textRDD.count shouldEqual -1
+    textRDD.count shouldEqual 197
   }
 
   exercice("you can do the same ") {

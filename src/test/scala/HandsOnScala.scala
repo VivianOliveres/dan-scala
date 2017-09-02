@@ -20,6 +20,7 @@ class HandsOnScala extends HandsOn {
     new part_1_basic,
     new part_2_collections,
     new part_3_functional_programming,
+    new part_4_advanced_collections,
     new part_6_sparkintro,
     new part_7_scaldingintro
   )
