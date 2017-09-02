@@ -104,8 +104,21 @@ class e10_fp extends HandsOnSuite {
     //    between them, like xyx, abcdefeghi (efe), or even aaa.
 
     def filterTextFile(str: String): List[String] = {
-      println(s"filterTextFile($str)")
-      ???
+      def firstProperty(input: String): Boolean = {
+        if (input.length < 4) return false
+        val toTest = input.substring(0, 2)
+        input.substring(2, input.length).contains(toTest) || firstProperty(input.tail)
+      }
+      def secondProperty(input: String): Boolean = {
+        if (input.length < 3) return false
+        val head = input.head
+        input.charAt(2) == head || secondProperty(input.tail)
+      }
+
+      str.split("\n")
+        .filter(firstProperty)
+        .filter(secondProperty)
+        .toList
     }
 
     filterTextFile(
