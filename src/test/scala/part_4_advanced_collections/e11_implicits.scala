@@ -18,12 +18,12 @@ class e11_implicits extends HandsOnSuite {
   def plus(i: Int)(implicit j: Int): Int = i + j
 
   exercice("I can pass implicit parameter explicitely") {
-    plus(2)(3) should be (__)
+    plus(2)(3) should be (5)
   }
 
   exercice("I can ommit implicit parameter if I already have one matching implicit value in scope") {
     implicit val toto = 3
-    plus(2) should be (__)
+    plus(2) should be (5)
   }
 
   sealed trait Mode
@@ -43,8 +43,8 @@ class e11_implicits extends HandsOnSuite {
     }
 
     implicit val mode = Local
-    doStuff("mathieu") should be (__)
-    doMoreStuff("mathieu", 28) should be (__)
+    doStuff("mathieu") should be ("local mathieu")
+    doMoreStuff("mathieu", 28) should be ("local mathieu 28")
   }
 
   exercice("Implicit scope are local") {
@@ -55,7 +55,7 @@ class e11_implicits extends HandsOnSuite {
     // }
 
     implicit val mode = Local
-    doStuff("mathieu") should be (__)
+    doStuff("mathieu") should be ("local mathieu")
 
     // doMoreStuff("mathieu") should be (__)
   }
@@ -67,6 +67,6 @@ class e11_implicits extends HandsOnSuite {
 
     import Dummy.mode
 
-    doStuff("mathieu") should be (__)
+    doStuff("mathieu") should be ("local mathieu")
   }
 }
