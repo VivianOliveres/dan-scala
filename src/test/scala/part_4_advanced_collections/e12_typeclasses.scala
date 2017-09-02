@@ -44,10 +44,10 @@ class e12_typeclasses extends HandsOnSuite{
     }
 
     // this is an abstraction of sum of Int
-    implicit val intMonoid: Monoid[Int] = ???
+    implicit val intMonoid: Monoid[Int] = from((a, b) => a + b)
 
     // this is an abstraction of list concatenation
-    implicit def listMonoid[T](): Monoid[List[T]] = ???
+    implicit def listMonoid[T](): Monoid[List[T]] = from((a, b) => a ::: b)
 
     // generic sum of tuples
     implicit def genericTupleMonoid[T: Monoid](): Monoid[(T,T)] = {
@@ -55,7 +55,7 @@ class e12_typeclasses extends HandsOnSuite{
       new Monoid[(T, T)] {
         override def plus(a: (T, T), b: (T, T)): (T, T) = {
           anchor("generic tuple monoid")
-          ???
+          (imon.plus(a._1, b._1), imon.plus(a._2, b._2))
         }
       }
     }
@@ -64,7 +64,7 @@ class e12_typeclasses extends HandsOnSuite{
     implicit def intTupleMonoid: Monoid[(Int,Int)] = new Monoid[(Int,Int)]{
       override def plus(a: (Int, Int), b: (Int, Int)): (Int, Int) = {
         anchor("specific tuple of int monoid")
-        ???
+        (a._1 + b._1, a._2 + b._2)
       }
     }
   }
@@ -72,7 +72,11 @@ class e12_typeclasses extends HandsOnSuite{
   case class Bidule(value: Int, items: List[String])
 
   object Bidule {
-    implicit val biduleMonoid: Monoid[Bidule] = ???
+    implicit val biduleMonoid: Monoid[Bidule] =
+      Monoid.from((a, b) => Bidule(
+        Monoid.intMonoid.plus(a.value, b.value),
+        Monoid.listMonoid().plus(a.items, b.items))
+      )
   }
 
 
@@ -92,30 +96,30 @@ class e12_typeclasses extends HandsOnSuite{
 
 
   exercice("I can give the monoid explicitely") {
-    sum(List(2,3,4))(Monoid.intMonoid) should be (__)
+    sum(List(2,3,4))(Monoid.intMonoid) should be (2+3+4)
   }
 
 
   exercice("It will find my monoid in local scope"){
-    implicit val doubleMonoid = ???
-    sum(List(0.06,1.1,2.2,3.3)) should be (__)
+    implicit val doubleMonoid: Monoid[Double] = Monoid.from((a, b) => a + b)
+    sum(List(0.06,1.1,2.2,3.3)) should be (0.06 + 1.1 + 2.2 + 3.3)
   }
 
 
   exercice("It can find my monoid in companion object of Monoid"){
-    sum(List(2,3,4)) should be (__)
+    sum(List(2,3,4)) should be (2 + 3 + 4)
   }
 
 
   exercice("It can find my monoid in the companion object of the generic type") {
-    sum(List(Bidule(2, List("a","b")), Bidule(1, List("c")))) should be (__)
+    sum(List(Bidule(2, List("a","b")), Bidule(1, List("c")))) should be (Bidule(2 + 1, List("a", "b", "c")))
   }
 
   exercice("I can import implicit definition of my monoid") {
     object Dummy {
-      implicit val toto: Monoid[String] = ???
+      implicit val toto: Monoid[String] = Monoid.from((a, b) => a + b)
     }
     import Dummy._
-    sum(List("a","b","c")) should be (__)
+    sum(List("a","b","c")) should be ("abc")
   }
 }
