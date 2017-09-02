@@ -67,6 +67,6 @@ class e11_implicits extends HandsOnSuite {
 
     import Dummy.mode
 
-    doStuff("mathieu") should be ("local mathieu")
+    doStuff("mathieu") should be ("remote mathieu")
   }
 }
