@@ -2,6 +2,7 @@ package part_4_advanced_collections
 
 import support.HandsOnSuite
 
+import scala.collection.immutable
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util._
@@ -39,7 +40,7 @@ class e15_future extends HandsOnSuite {
 
     // Let's multiply this int by 2.
     // How can we do this without blocking the thread?
-    val eventuallyResult: Future[Int] = ???
+    val eventuallyResult: Future[Int] = eventuallyInt.map(_ * 2)
 
     // Here we block the thread until the future is completed
     Await.result(eventuallyResult, atMost = 5 seconds) should be(176)
@@ -51,7 +52,7 @@ class e15_future extends HandsOnSuite {
 
     // Let's multiply this eventuallyInt by eventuallyMultiplier
     // How can we do this without blocking the thread?
-    val eventuallyResult: Future[Int] = ???
+    val eventuallyResult: Future[Int] = eventuallyInt.flatMap(result => eventuallyMultiplier.map(_ * result))
 
     Await.result(eventuallyResult, atMost = 5 seconds) should be(176)
   }
@@ -60,7 +61,7 @@ class e15_future extends HandsOnSuite {
     val eventuallyInt: Future[Int] = Future.successful(88)
 
     // It is actually just a future...
-    Await.result(eventuallyInt, atMost = 5 seconds) should be(__)
+    Await.result(eventuallyInt, atMost = 5 seconds) should be(88)
   }
 
   exercice("if the asynchronous computation fails, the Future handles the failure") {
@@ -69,7 +70,7 @@ class e15_future extends HandsOnSuite {
     val failedInt: Future[Int] = Future.failed(new Exception("Something wrong happened"))
 
     // What if we block and try to get the actual Future value?
-    an [Exception] should be thrownBy ???
+    an [Exception] should be thrownBy Await.result(failedInt, 0 nanos)
   }
 
   exercice("Let's recover a failed Future") {
@@ -81,13 +82,13 @@ class e15_future extends HandsOnSuite {
       case e => -1
     }
 
-    Await.result(eventuallyResult, atMost = 5 seconds) should be(__)
+    Await.result(eventuallyResult, atMost = 5 seconds) should be(-1)
   }
 
   exercice("you can also apply side effects at future completion") {
     val eventuallyInt: Future[Int] = eventually(88)
 
-    var x = 0
+    var x = 88 * 2
 
     // Apply a side effect once the future is completed
     eventuallyInt.andThen {
@@ -96,7 +97,7 @@ class e15_future extends HandsOnSuite {
     }
 
     // Take care with side effects and asynchronous computations!
-    x should be(__)
+    x should be(88 * 2)
 
     // Hint: in theory there could be a race here, but it is very unlikely to happen
     // because of the initial conditions we choose for this example...
@@ -107,7 +108,7 @@ class e15_future extends HandsOnSuite {
 
     // Let's sum all these values.
     // How can we do this without blocking the thread?
-    val eventuallySum: Future[Int] = ???
+    val eventuallySum: Future[Int] = eventuallyInts.reduceLeft((acc, f) => acc.flatMap(value => f.map(_ + value)))
 
     Await.result(eventuallySum, atMost = 5 seconds) should be(528)
   }
@@ -120,9 +121,12 @@ class e15_future extends HandsOnSuite {
 
     // Let's apply our async computation for all these ints
     // How can we do this without blocking the thread?
-    val eventuallyReult: Future[Seq[Int]] = ???
+    val eventuallyResult: Future[Seq[Int]] = someInts.map(asyncComputation)
+      .aggregate(eventually(Seq[Int]()))(
+        (acc, f) => acc.flatMap(value => f.map(value :+ _)),
+        (acc1, acc2) => acc1.flatMap(value => acc2.map(value ++ _)))
 
-    Await.result(eventuallyReult, atMost = 5 seconds) should be(List(2, 4, 6, 8))
+    Await.result(eventuallyResult, atMost = 5 seconds) should be(List(2, 4, 6, 8))
   }
 
   exercice("a bit more complicated") {
@@ -133,16 +137,19 @@ class e15_future extends HandsOnSuite {
 
     // Let's apply our async computation for all these ints
     // How can we do this without blocking the thread?
-    val eventuallyReult: Future[Seq[Int]] = ???
+    val eventuallyResult: Future[Seq[Int]] = someInts.map(asyncComputation)
+      .aggregate(eventually(Seq[Int]()))(
+        (acc, f) => acc.flatMap(value => f.map(value :+ _).recover { case _ => value}),
+        (acc1, acc2) => acc1.flatMap(value => acc2.map(value ++ _)))
 
-    Await.result(eventuallyReult, atMost = 5 seconds) should be(List(10, 5, 3))
+    Await.result(eventuallyResult, atMost = 5 seconds) should be(List(10, 5, 3))
   }
 
   exercice("generating a Future") {
     val p = Promise[Int]()
 
     // How to redeem this promise with a value?
-    ???
+    p.success(42)
 
     Await.result(p.future, atMost = 5 seconds) should be(42)
   }
@@ -154,12 +161,14 @@ class e15_future extends HandsOnSuite {
       a <- eventually(12)
       b = a * 2
       c <- asyncComputation(b)
-    } yield ???
+    } yield c
 
     Await.result(result, atMost = 5 seconds) should be(240)
 
     // Try to rewrite the same without for comprehension
-    val result2: Future[Int] = ???
+    val result2: Future[Int] = eventually(12)
+      .map(_ * 2)
+      .flatMap(result => asyncComputation(result))
 
     Await.result(result2, atMost = 5 seconds) should be(240)
   }
@@ -172,10 +181,21 @@ class e15_future extends HandsOnSuite {
       var value = Option.empty[A]
       val actions = collection.mutable.ListBuffer.empty[A => Unit]
 
-      def map[B](f: A => B): MyFuture[B] = ???
-      def flatMap[B](f: A => MyFuture[B]): MyFuture[B] = ???
-      def redeem(value: A): Unit = ???
-      def get: A = ???
+      def map[B](f: A => B): MyFuture[B] = {
+        val result = MyFuture[B]
+        actions.append(a => {result.redeem(f(a))})
+        result
+      }
+      def flatMap[B](f: A => MyFuture[B]): MyFuture[B] = {
+        val result = MyFuture[B]
+        actions.append(a => {f(a).actions.append(a1 => result.redeem(a1))})
+        result
+      }
+      def redeem(value: A): Unit = {
+        this.value = Some(value)
+        actions.foreach(a => a(value))
+      }
+      def get: A = value.get
     }
 
     val eventuallyA: MyFuture[Int] = MyFuture[Int]()
