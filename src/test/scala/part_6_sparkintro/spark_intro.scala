@@ -70,18 +70,12 @@ class Intro extends HandsOnSuite with BeforeAndAfter {
   }
 
   def topNWords(input: RDD[String], n: Int): Array[String] = {
+    // input.flatMap(_.split(" ")).filter(!_.isEmpty).map(w => (w, 1)).reduceByKey(_ + _).sortBy(t => (-t._2, t._1)).take(2 * n).foreach(println)
     input.flatMap(_.split(" "))
       .filter(!_.isEmpty)
       .map(w => (w, 1))
-      .reduceByKey((a, b) => a + b)
-      .sortBy(_._2, false)
-      .take(2 * n)
-      .foreach(println(_))
-    input.flatMap(_.split(" "))
-      .filter(!_.isEmpty)
-      .map(w => (w, 1))
-      .reduceByKey((a, b) => a + b)
-      .sortBy(_._2, false)
+      .reduceByKey(_ + _)
+      .sortBy(t => (-t._2, t._1))
       .map(_._1)
       .take(n)
   }
@@ -89,10 +83,10 @@ class Intro extends HandsOnSuite with BeforeAndAfter {
   def topNWordsWithAtLeastMLetters(input: RDD[String], n: Int, m: Int): Array[String] = {
     input.flatMap(_.split(" "))
       .filter(_.length >= m)
-      .groupBy(word => (word, word))
-      .map{case (w, list) => (w, list.size)}
-      .sortBy(_._2)
-      .map{_._1._1}
+      .map(w => (w, 1))
+      .reduceByKey(_ + _)
+      .sortBy(t => (-t._2, t._1))
+      .map(_._1)
       .take(n)
   }
 
