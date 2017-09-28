@@ -37,12 +37,20 @@ object StockController extends Controller {
   }
 
   get("/stocks/:symbol") { r: Request =>
-    ???
+    StockService.fetchSymbol(r.getParam("symbol"))
   }
 
 }
 
 case class Stock(symbol: String, name: String, price: Double, change: Double)
+object Stock {
+
+  def cleanSymbol(symbol: String): String = symbol.replaceAll("\"", "")
+
+  def apply(csvLine: List[String]) = csvLine match {
+    case symbol :: name :: price :: change :: Nil => new Stock(cleanSymbol(symbol), cleanSymbol(name), price.toDouble, change.toDouble)
+  }
+}
 
 object StockService {
   private val API = "download.finance.yahoo.com"
@@ -53,7 +61,7 @@ object StockService {
       .newService(s"$API:80")
   }
 
-  def fetchSymbol(symbol: String): Future[Stock] = ???
+  def fetchSymbol(symbol: String): Future[Stock] = fetchData(symbol).map(line => Stock(line.split(",").toList))
 
   // Data will look like =>
   // "CRTO","Criteo S.A.",39.83,+0.61

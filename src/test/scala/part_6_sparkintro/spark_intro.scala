@@ -70,7 +70,6 @@ class Intro extends HandsOnSuite with BeforeAndAfter {
   }
 
   def topNWords(input: RDD[String], n: Int): Array[String] = {
-    // input.flatMap(_.split(" ")).filter(!_.isEmpty).map(w => (w, 1)).reduceByKey(_ + _).sortBy(t => (-t._2, t._1)).take(2 * n).foreach(println)
     input.flatMap(_.split(" "))
       .filter(!_.isEmpty)
       .map(w => (w, 1))
